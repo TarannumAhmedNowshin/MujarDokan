@@ -87,10 +87,18 @@ const CheckoutPage = () => {
             <div>
               {cart.map((product) => (
                 <div key={product.id} className="flex justify-between items-center p-4 border-b">
-                  <div>
-                    <h2>{product.name}</h2>
-                    <p>{product.description}</p>
-                    <span>${(product.price * (quantities[product.id] || 1)).toFixed(2)}</span>  {/* Adjust price calculation */}
+                  <div className="flex items-center">
+                    {/* Display Product Image */}
+                    <img 
+                      src={product.image} 
+                      alt={product.name} 
+                      className="w-16 h-16 mr-4" 
+                    />
+                    <div>
+                      <h2>{product.name}</h2>
+                      <p>{product.description}</p>
+                      <span>${(product.price * (quantities[product.id] || 1)).toFixed(2)}</span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -151,4 +159,3 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
-

@@ -45,7 +45,12 @@ const CartPage = () => {
             {cart.map((product) => (
               <div key={product.id} className="flex justify-between items-center p-4 border-b">
                 <div className="flex items-center">
-                  <img src={product.image} alt={product.name} className="w-16 h-16 mr-4" />
+                  {/* Display Product Image */}
+                  <img 
+                    src={product.image}  // Use the correct image path
+                    alt={product.name} 
+                    className="w-16 h-16 mr-4"
+                  />
                   <div>
                     <h2 className="font-semibold">{product.name}</h2>
                     <p className="text-gray-600 text-sm">{product.description}</p>
@@ -88,4 +93,6 @@ const CartPage = () => {
 };
 
 export default CartPage;
+
+
 

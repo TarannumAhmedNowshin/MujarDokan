@@ -7,21 +7,21 @@ const products = [
     name: "Product 1",
     price: 29.99,
     description: "This is a great product!",
-    image: "https://via.placeholder.com/200",
+    image: "/images/hearts.jpeg",
   },
   {
     id: 2,
     name: "Product 2",
     price: 49.99,
     description: "Another amazing product.",
-    image: "https://via.placeholder.com/200",
+    image: "/images/mouth.jpeg",
   },
   {
     id: 3,
     name: "Product 3",
     price: 19.99,
     description: "A fantastic product for your needs.",
-    image: "https://via.placeholder.com/200",
+    image: "/images/teddy.jpeg",
   },
 ];
 
@@ -32,7 +32,15 @@ const ProductList = () => {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
       {products.map((product) => (
         <div key={product.id} className="max-w-sm rounded overflow-hidden shadow-lg bg-white">
-          <img className="w-full" src={product.image} alt={product.name} />
+          {/* Image with hover zoom effect */}
+          <div className="relative">
+            <img
+              className="w-full h-64 object-cover transform transition-transform duration-300 hover:scale-110"
+              src={product.image}
+              alt={product.name}
+            />
+          </div>
+          
           <div className="px-6 py-4">
             <h2 className="font-bold text-xl">{product.name}</h2>
             <p className="text-gray-700 text-base">{product.description}</p>
