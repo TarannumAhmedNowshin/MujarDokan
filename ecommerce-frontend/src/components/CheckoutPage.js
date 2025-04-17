@@ -1,14 +1,15 @@
+
 import React, { useState } from 'react';
-import { useCart } from '../context/CartContext';  // Import useCart hook
+import { useCart } from '../context/CartContext';
+import axios from 'axios';
 
 const CheckoutPage = () => {
   const { cart, getTotalPrice } = useCart();
   const [formData, setFormData] = useState({
     name: '',
     address: '',
-    paymentMethod: 'creditCard', // Default payment method
+    paymentMethod: 'creditCard',
   });
-
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   // Handle form input changes
@@ -21,10 +22,33 @@ const CheckoutPage = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here, you can process the order (e.g., send data to the backend)
-    setIsSubmitted(true);
+
+    const token = localStorage.getItem('access_token'); // Get the JWT token
+
+    try {
+      const response = await axios.post(
+        'http://127.0.0.1:8000/api/place-order/',
+        {
+          products: cart.map((product) => ({
+            product_id: product.id,
+            quantity: 1, // Use the actual quantity if you're saving it in the cart
+          })),
+          user_data: formData,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log(response.data); // Log the response for debugging
+      setIsSubmitted(true); // Set to true after order is placed successfully
+    } catch (error) {
+      console.error('Error placing the order', error);
+    }
   };
 
   return (
@@ -105,3 +129,4 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
+

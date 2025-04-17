@@ -1,5 +1,3 @@
-# ecommerce_backend/settings.py
-
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -19,6 +17,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'store',  # Ensure that the 'store' app is listed here
+    'corsheaders',  # CORS headers for cross-origin requests
 ]
 
 # Middleware configuration
@@ -30,7 +29,17 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # This should come before CommonMiddleware
 ]
+
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for local development
+# For production, you can specify which origins are allowed:
+# CORS_ALLOWED_ORIGINS = [
+#     'http://localhost:3000',  # Frontend URL in production
+# ]
+
+CORS_ALLOW_CREDENTIALS = True  # Allow credentials for cross-origin requests (e.g., cookies, tokens)
 
 # URL configuration
 ROOT_URLCONF = 'ecommerce_backend.urls'
@@ -89,9 +98,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, images)
 STATIC_URL = '/static/'
 
-# REST framework settings
+# REST framework settings (JWT Authentication)
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
