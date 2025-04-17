@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-router-dom": "^7.5.0",
     "react-scripts": "^5.0.0",
-    "tailwindcss": "^2.2.19",
-    "postcss": "^8.5.3",
-    "autoprefixer": "^10.4.21"
+    "tailwindcss": "^2.2.19"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",

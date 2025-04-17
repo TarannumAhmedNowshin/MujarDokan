@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCart } from '../context/CartContext';  // Import the Cart context
+import { useCart } from '../context/CartContext';  // Import the useCart hook
 
 const products = [
   {
@@ -26,7 +26,7 @@ const products = [
 ];
 
 const ProductList = () => {
-  const { addToCart } = useCart();  // Use the addToCart function from CartContext
+  const { addToCart } = useCart();  // Access the addToCart function from CartContext
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
@@ -40,7 +40,7 @@ const ProductList = () => {
               <span className="font-bold text-xl">${product.price}</span>
               <button
                 className="bg-blue-500 text-white py-2 px-4 rounded"
-                onClick={() => addToCart(product)}  // Add product to cart
+                onClick={() => addToCart(product)}  // Add the product to the cart
               >
                 Add to Cart
               </button>
