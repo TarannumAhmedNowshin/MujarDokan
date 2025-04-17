@@ -1,16 +1,22 @@
-
 import React, { useState } from 'react';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../context/CartContext';  // Import the useCart hook
 import axios from 'axios';
 
 const CheckoutPage = () => {
-  const { cart, getTotalPrice } = useCart();
+  const { cart, getTotalPrice } = useCart();  // Get the cart and total price from context
   const [formData, setFormData] = useState({
     name: '',
     address: '',
     paymentMethod: 'creditCard',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState('');  // State for handling errors
+  const [quantities, setQuantities] = useState(
+    cart.reduce((acc, product) => {
+      acc[product.id] = 1; // Default quantity is 1 for each item
+      return acc;
+    }, {})
+  );
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -21,33 +27,47 @@ const CheckoutPage = () => {
     }));
   };
 
+  // Handle quantity changes in the cart
+  const handleQuantityChange = (productId, value) => {
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [productId]: Math.max(1, parseInt(value)),  // Prevent quantity from being less than 1
+    }));
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem('access_token'); // Get the JWT token
+    const token = localStorage.getItem('access_token'); // Get the JWT token from localStorage
+
+    if (!token) {
+      setError('Please log in to place an order');  // If no token, show error
+      return;
+    }
 
     try {
       const response = await axios.post(
-        'http://127.0.0.1:8000/api/place-order/',
+        'http://127.0.0.1:8000/api/place-order/', // API endpoint for placing the order
         {
           products: cart.map((product) => ({
             product_id: product.id,
-            quantity: 1, // Use the actual quantity if you're saving it in the cart
+            quantity: quantities[product.id] || 1,  // Ensure quantity is set from cart state
           })),
-          user_data: formData,
+          user_data: formData,  // Include the user data (name, address, etc.)
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // Send token as Bearer
             'Content-Type': 'application/json',
           },
         }
       );
-      console.log(response.data); // Log the response for debugging
-      setIsSubmitted(true); // Set to true after order is placed successfully
+      console.log(response.data);  // Log the response for debugging
+      setIsSubmitted(true);  // Successfully placed order, show success message
     } catch (error) {
       console.error('Error placing the order', error);
+      setError('An error occurred while placing your order. Please try again.');
     }
   };
 
@@ -70,7 +90,7 @@ const CheckoutPage = () => {
                   <div>
                     <h2>{product.name}</h2>
                     <p>{product.description}</p>
-                    <span>${product.price}</span>
+                    <span>${(product.price * (quantities[product.id] || 1)).toFixed(2)}</span>  {/* Adjust price calculation */}
                   </div>
                 </div>
               ))}
@@ -122,6 +142,8 @@ const CheckoutPage = () => {
               Place Order
             </button>
           </form>
+
+          {error && <p className="text-red-500 text-center">{error}</p>}  {/* Display error if any */}
         </div>
       )}
     </div>

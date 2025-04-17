@@ -3,19 +3,35 @@ import { useCart } from '../context/CartContext';  // Import useCart hook
 import { useNavigate } from 'react-router-dom';  // Import useNavigate from react-router-dom
 
 const CartPage = () => {
-  const { cart, addToCart, removeFromCart, getTotalPrice } = useCart();
+  const { cart, addToCart, removeFromCart } = useCart();
   const [quantities, setQuantities] = useState(
     cart.reduce((acc, product) => {
       acc[product.id] = 1; // Default quantity is 1 for each item
       return acc;
     }, {})
   );
-  
+
   const navigate = useNavigate();  // Initialize useNavigate hook
 
   // Function to navigate to the checkout page
   const handleProceedToCheckout = () => {
     navigate('/checkout');  // Navigate to the Checkout Page
+  };
+
+  // Update the quantity in the cart
+  const handleQuantityChange = (productId, value) => {
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [productId]: Math.max(1, parseInt(value)),  // Prevent quantity from being less than 1
+    }));
+  };
+
+  // Function to calculate the total price
+  const getTotalPrice = () => {
+    return cart.reduce((total, product) => {
+      const productQuantity = quantities[product.id] || 1;  // Default quantity to 1
+      return total + (product.price * productQuantity);  // Price * quantity
+    }, 0);
   };
 
   return (
@@ -41,10 +57,7 @@ const CartPage = () => {
                     value={quantities[product.id] || 1}
                     min="1"
                     onChange={(e) =>
-                      setQuantities((prevQuantities) => ({
-                        ...prevQuantities,
-                        [product.id]: Math.max(1, parseInt(e.target.value)),
-                      }))
+                      handleQuantityChange(product.id, e.target.value)
                     }
                     className="w-12 p-2 text-center border"
                   />
@@ -75,3 +88,4 @@ const CartPage = () => {
 };
 
 export default CartPage;
+
