@@ -1,47 +1,34 @@
+from decimal import Decimal
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Product, Order
-from .serializers import OrderSerializer, ProductSerializer  # Ensure ProductSerializer is imported
+from .serializers import OrderSerializer, ProductSerializer
 
 @api_view(['POST'])
 def place_order(request):
     try:
-        user = request.user
-        products = request.data.get('products', [])
-        user_data = request.data.get('user_data', {})
+        # Extract product information and total_amount from the request
+        products_data = request.data.get('products', [])
+        total_amount = request.data.get('total_amount', 0)
 
-        # Create the order
-        order = Order.objects.create(user=user)
+        # Ensure the total amount is treated as a Decimal for calculations
+        total_amount = Decimal(total_amount)  # Convert to Decimal to avoid issues
 
-        total_price = 0  # Initialize the total price
+        # Create the order instance
+        order = Order.objects.create(total_amount=total_amount)
 
-        for product in products:
-            # Check if the product exists and has sufficient stock
-            product_instance = Product.objects.get(id=product['product_id'])
-            if product_instance.amount * product['quantity'] > product_instance.amount:  # Ensure stock validation
-                return Response({"error": f"Not enough stock for {product_instance.name}"}, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                # Create order items by directly associating the product to the order
-                order.total_amount += product_instance.amount * product['quantity']
-
-                # Decrease stock after placing the order
-                product_instance.amount -= product['quantity']
-                product_instance.save()
-
-        order.total_amount = total_price  # Set the total price for the order
+        # Add products to the order
+        product_ids = [product['product_id'] for product in products_data]
+        products = Product.objects.filter(id__in=product_ids)
+        order.products.set(products)  # Add products to the order using Many-to-Many field
         order.save()
 
-        return Response({
-            'id': order.id,
-            'user': order.user.id,
-            'total_price': total_price,
-            'created_at': order.created_at,
-        }, status=status.HTTP_201_CREATED)
+        # Return the serialized order data
+        return Response({"id": order.id, "total_amount": str(order.total_amount)}, status=201)
 
     except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+        return Response({"error": str(e)}, status=500)
 
 @api_view(['GET'])
 def product_list(request):

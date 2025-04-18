@@ -25,9 +25,7 @@ const LandingPage = () => {
       </div>
 
       {/* Optional Product Image */}
-      <div className="absolute bottom-20 right-16 md:bottom-32 md:right-32">
-        <img src="https://via.placeholder.com/200x400" alt="Product" className="rounded-lg shadow-lg" />
-      </div>
+      
     </div>
   );
 };

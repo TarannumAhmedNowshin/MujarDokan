@@ -10,8 +10,16 @@ class Product(models.Model):
         return self.name
 
 class Order(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)  # Link to Product model
+    # Fields for user data
+    name = models.CharField(max_length=100)  # User's name
+    address = models.CharField(max_length=255)  # User's address
+    payment_method = models.CharField(max_length=50)  # Payment method (e.g., credit card)
+
+    # Relationship with Product
+    products = models.ManyToManyField(Product)  # Allows for multiple products in one order
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)  # Total amount of the order
+    created_at = models.DateTimeField(auto_now_add=True)  # Timestamp when the order is created
 
     def __str__(self):
-        return f"Order for {self.product.name} with total amount {self.total_amount}"
+        return f"Order by {self.name} with total amount {self.total_amount}"
+

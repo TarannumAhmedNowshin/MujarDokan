@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';  // Import Link from react-router-dom
 import LoginPage from './components/LoginPage';  // Import LoginPage component
 import ProductList from './components/ProductList';  // Import ProductList component
@@ -7,6 +7,20 @@ import CheckoutPage from './components/CheckoutPage';  // Import CheckoutPage co
 import LandingPage from './components/LandingPage';  // Import the LandingPage
 
 const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check if the user is logged in by looking for an access token in localStorage
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    setIsLoggedIn(!!token);  // If token exists, set isLoggedIn to true, else false
+  }, []);
+
+  // Handle logout functionality
+  const handleLogout = () => {
+    localStorage.removeItem('access_token');  // Remove the token from localStorage
+    setIsLoggedIn(false);  // Update the state to reflect that the user is logged out
+  };
+
   return (
     <Router>
       <div className="App">
@@ -18,9 +32,8 @@ const App = () => {
 
             {/* Navigation Links */}
             <div className="space-x-8">
-              <a href="/why" className="text-white hover:text-yellow-400">WHY AYO</a>
+              <a href="/why" className="text-white hover:text-yellow-400">WHY MUJA</a>
               <a href="/shop" className="text-white hover:text-yellow-400">OUR SCIENCE</a>
-              <a href="/success-stories" className="text-white hover:text-yellow-400">SUCCESS STORIES</a>
               <a href="/faq" className="text-white hover:text-yellow-400">FAQ</a>
             </div>
 
@@ -28,6 +41,23 @@ const App = () => {
             <div className="flex items-center space-x-4">
               <a href="/shop" className="text-white hover:text-yellow-400">SHOP</a>
               <a href="/cart" className="bg-black text-yellow-400 py-2 px-6 rounded-full hover:bg-yellow-400 hover:text-black transition">CART</a>
+
+              {/* Conditionally render Login/Logout button */}
+              {isLoggedIn ? (
+                <button
+                  onClick={handleLogout}
+                  className="bg-black text-yellow-400 py-2 px-6 rounded-full hover:bg-yellow-400 hover:text-black transition"
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  to="/login"
+                  className="bg-black text-yellow-400 py-2 px-6 rounded-full hover:bg-yellow-400 hover:text-black transition"
+                >
+                  Login
+                </Link>
+              )}
             </div>
           </div>
         </header>
@@ -48,3 +78,4 @@ const App = () => {
 };
 
 export default App;
+
