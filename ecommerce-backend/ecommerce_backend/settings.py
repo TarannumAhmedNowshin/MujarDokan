@@ -16,9 +16,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'store',  # Ensure that the 'store' app is listed here
-    'corsheaders',  # CORS headers for cross-origin requests
+    'store',  # Your app for products, orders, etc.
+    'rest_framework',  # Django REST Framework
+    'corsheaders',  # CORS middleware
+    'rest_framework_simplejwt',  # JWT Authentication
 ]
+
+# CORS Configuration
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+
 
 # Middleware configuration
 MIDDLEWARE = [
@@ -32,14 +39,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # This should come before CommonMiddleware
 ]
 
-# CORS settings
-CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for local development
-# For production, you can specify which origins are allowed:
-# CORS_ALLOWED_ORIGINS = [
-#     'http://localhost:3000',  # Frontend URL in production
-# ]
 
-CORS_ALLOW_CREDENTIALS = True  # Allow credentials for cross-origin requests (e.g., cookies, tokens)
 
 # URL configuration
 ROOT_URLCONF = 'ecommerce_backend.urls'
@@ -67,10 +67,17 @@ WSGI_APPLICATION = 'ecommerce_backend.wsgi.application'
 # Database configuration (using SQLite for now)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'djongo',
+        'NAME': 'hellokitty',  # MongoDB database name
+        'ENFORCE_SCHEMA': False,
+        'CLIENT': {
+            'host': 'mongodb+srv://hellokitty:bracbrac@cluster0.e3zxss1.mongodb.net/hellokitty?retryWrites=true&w=majority',  # Replace <password> with your password
+        }
     }
 }
+
+
+
 
 # Password validation (for production, make sure you change these settings)
 AUTH_PASSWORD_VALIDATORS = [

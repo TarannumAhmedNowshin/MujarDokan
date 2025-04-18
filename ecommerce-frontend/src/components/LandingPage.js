@@ -10,7 +10,7 @@ const LandingPage = () => {
       {/* Main content */}
       <div className="relative z-10 text-center px-4 md:px-16">
         <h1 className="text-5xl md:text-7xl font-extrabold leading-tight mb-4">
-          Get pookie socks ^*^
+          Get pookie socks (˶ᵔ ᵕ ᵔ˶)
         </h1>
         <p className="text-lg md:text-2xl mb-8">
           Sleep Better. Wear socks. Start running.

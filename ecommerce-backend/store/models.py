@@ -1,4 +1,5 @@
-from django.db import models
+# store/models.py
+from djongo import models
 from django.contrib.auth.models import User
 
 class Product(models.Model):
@@ -6,6 +7,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
     image = models.URLField()
+    stock = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -15,7 +17,8 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     created_at = models.DateTimeField(auto_now_add=True)  # Automatically set to current time on creation
-
+    status = models.CharField(max_length=50, default="Pending")
+    
     def __str__(self):
         return f"Order {self.id} for {self.user}"
 

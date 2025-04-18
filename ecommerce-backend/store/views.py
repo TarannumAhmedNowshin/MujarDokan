@@ -1,13 +1,13 @@
+# store/views.py
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from django.shortcuts import render
-from .models import Product, Order, OrderItem  # Import OrderItem model to add items to the order
-from .serializers import OrderSerializer  # Ensure you have a serializer for the Order model
+from .models import Product, Order, OrderItem
+from .serializers import OrderSerializer, ProductSerializer  # Ensure ProductSerializer is imported
 
 @api_view(['POST'])
 def place_order(request):
-    if request.method == 'POST':
+    try:
         user = request.user
         products = request.data.get('products', [])
         user_data = request.data.get('user_data', {})
@@ -15,16 +15,24 @@ def place_order(request):
         # Create the order
         order = Order.objects.create(user=user)
 
-        # Create order items and add them to the order
         for product in products:
-            order_item = OrderItem.objects.create(
-                order=order,
-                product_id=product['product_id'],
-                quantity=product['quantity']
-            )
+            # Check if the product exists and has sufficient stock
+            product_instance = Product.objects.get(id=product['product_id'])
+            if product_instance.stock < product['quantity']:
+                return Response({"error": f"Not enough stock for {product_instance.name}"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                # Create order items
+                order_item = OrderItem.objects.create(
+                    order=order,
+                    product_id=product['product_id'],
+                    quantity=product['quantity']
+                )
+                
+                # Decrease stock after placing the order
+                product_instance.stock -= product['quantity']
+                product_instance.save()
 
-        # Calculate the total price
-        total_price = order.total  # This assumes your Order model has the total property
+        total_price = order.total
         order.total_price = total_price
         order.save()
 
@@ -35,21 +43,14 @@ def place_order(request):
             'created_at': order.created_at,
         }, status=status.HTTP_201_CREATED)
     
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    
+@api_view(['GET'])
 def product_list(request):
-    """
-    This view returns a list of all products in JSON format.
-    It is useful for displaying the available products on the frontend.
-    """
-    # Retrieve all products from the database
-    products = Product.objects.all()
-
-    # Serialize the product data into a list of dictionaries
-    product_data = [
-        {"id": product.id, "name": product.name, "price": product.price, "description": product.description}
-        for product in products
-    ]
-
-    return Response(product_data, status=status.HTTP_200_OK)  # Return as a JSON response
-
+    try:
+        products = Product.objects.all()
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": "Error fetching products: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
