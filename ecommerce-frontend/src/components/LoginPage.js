@@ -20,37 +20,32 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Clear any previous error messages
-    setError(null);
+    setError(null); // Reset error state on each submit
 
     try {
-      const response = await axios.post(
-        'http://127.0.0.1:8000/api/token/', // API endpoint for login
-        {
-          username: formData.username,
-          password: formData.password,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+        const response = await axios.post(
+            'http://127.0.0.1:8000/api/token/', // JWT Token API endpoint
+            {
+                username: formData.username,
+                password: formData.password,
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
 
-      // After successful login, store the access token
-      const token = response.data.access;
-      localStorage.setItem('access_token', token);  // Save the token in localStorage
+        const token = response.data.access; // Retrieve the access token
+        localStorage.setItem('access_token', token); // Store token in local storage
 
-      // Redirect to the home page (or wherever you want)
-      navigate('/');  // Redirect to the homepage after successful login
-
+        navigate('/'); // Redirect to home page after successful login
     } catch (error) {
-      console.error('Error logging in', error);
-      // Set an error message for invalid login or any server issues
-      setError('Invalid credentials or server error');
+        console.error('Login failed:', error);
+        setError('Invalid credentials or server error');
     }
-  };
+};
+
 
   return (
     <div className="login-form p-4 max-w-md mx-auto">

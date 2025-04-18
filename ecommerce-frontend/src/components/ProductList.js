@@ -1,32 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';  // Import the useCart hook
-
-const products = [
-  {
-    id: 1,
-    name: "Product 1",
-    price: 29.99,
-    description: "This is a great product!",
-    image: "/images/hearts.jpeg",
-  },
-  {
-    id: 2,
-    name: "Product 2",
-    price: 49.99,
-    description: "Another amazing product.",
-    image: "/images/mouth.jpeg",
-  },
-  {
-    id: 3,
-    name: "Product 3",
-    price: 19.99,
-    description: "A fantastic product for your needs.",
-    image: "/images/teddy.jpeg",
-  },
-];
-
+import axios from "axios";
 const ProductList = () => {
+  const [products, setProducts] = useState([]);  // State for storing products
   const { addToCart } = useCart();  // Access the addToCart function from CartContext
+
+  // Fetch product data from the backend when the component mounts
+  useEffect(() => {
+    axios.get("http://127.0.0.1:8000/api/products/")
+      .then(response => setProducts(response.data)) // Set the product data into state
+      .catch(error => console.error("Error fetching products:", error)); // Handle any errors
+  }, []);  // The empty dependency array ensures the request happens only once when the component mounts
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
@@ -36,7 +20,7 @@ const ProductList = () => {
           <div className="relative">
             <img
               className="w-full h-64 object-cover transform transition-transform duration-300 hover:scale-110"
-              src={product.image}
+              src={product.image}  // Use the image URL from the API response
               alt={product.name}
             />
           </div>
@@ -59,5 +43,5 @@ const ProductList = () => {
     </div>
   );
 };
-
+// At the bottom of ProductList.js
 export default ProductList;

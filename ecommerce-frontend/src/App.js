@@ -18,8 +18,9 @@ const App = () => {
 
             {/* Navigation Links */}
             <div className="space-x-8">
-              <a href="/why" className="text-white hover:text-yellow-400">WHY US</a>
+              <a href="/why" className="text-white hover:text-yellow-400">WHY AYO</a>
               <a href="/shop" className="text-white hover:text-yellow-400">OUR SCIENCE</a>
+              <a href="/success-stories" className="text-white hover:text-yellow-400">SUCCESS STORIES</a>
               <a href="/faq" className="text-white hover:text-yellow-400">FAQ</a>
             </div>
 

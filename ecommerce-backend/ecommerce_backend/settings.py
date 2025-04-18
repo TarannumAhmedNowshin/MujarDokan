@@ -1,7 +1,11 @@
 import os
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Security settings (change these in production)
 SECRET_KEY = 'your-secret-key-here'
@@ -23,8 +27,14 @@ INSTALLED_APPS = [
 ]
 
 # CORS Configuration
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # Frontend URL
+    'http://127.0.0.1:3000',  # Also allow this in case of using 127.0.0.1 instead of localhost
+]
+
+
 CORS_ALLOW_CREDENTIALS = True
+
 
 
 # Middleware configuration
@@ -32,12 +42,13 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Should be here
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # This should come before CommonMiddleware
 ]
+
 
 
 
