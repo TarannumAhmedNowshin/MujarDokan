@@ -1,14 +1,22 @@
 import os
 
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Media settings
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# Define the path for collecting static files
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Ensure STATIC_URL is also set
+STATIC_URL = '/static/'
+
 
 # Security settings (change these in production)
-SECRET_KEY = 'your-secret-key-here'
+SECRET_KEY = 'your-secret-key-here'  # Change this to a strong secret key
 DEBUG = True
 ALLOWED_HOSTS = []
 
@@ -32,10 +40,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:3000',  # Also allow this in case of using 127.0.0.1 instead of localhost
 ]
 
-
 CORS_ALLOW_CREDENTIALS = True
-
-
 
 # Middleware configuration
 MIDDLEWARE = [
@@ -48,9 +53,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-
-
 
 # URL configuration
 ROOT_URLCONF = 'ecommerce_backend.urls'
@@ -75,20 +77,17 @@ TEMPLATES = [
 # WSGI application
 WSGI_APPLICATION = 'ecommerce_backend.wsgi.application'
 
-# Database configuration (using SQLite for now)
+# Database configuration for MongoDB using Djongo
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
+        'ENGINE': 'djongo',  # Using Djongo as the database backend
         'NAME': 'hellokitty',  # MongoDB database name
-        'ENFORCE_SCHEMA': False,
+        'ENFORCE_SCHEMA': False,  # Optional, set to True if you want schema enforcement
         'CLIENT': {
-            'host': 'mongodb+srv://hellokitty:bracbrac@cluster0.e3zxss1.mongodb.net/hellokitty?retryWrites=true&w=majority',  # Replace <password> with your password
+            'host': 'mongodb+srv://hellokitty:bracbrac@cluster0.e3zxss1.mongodb.net/hellokitty?retryWrites=true&w=majority',  # MongoDB Atlas URI
         }
     }
 }
-
-
-
 
 # Password validation (for production, make sure you change these settings)
 AUTH_PASSWORD_VALIDATORS = [
@@ -124,4 +123,3 @@ REST_FRAMEWORK = {
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
